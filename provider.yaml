@@ -1,0 +1,36 @@
+name: apple-container
+version: v0.1.0
+description: Use Apple's `container` as a DevPod provider
+agent:
+  path: ${DEVPOD}   # use the local DevPod agent
+options:
+  IMAGE:
+    description: OCI image to boot as the workspace host
+    default: debian:stable-slim
+    required: true
+  CONTAINER_NAME:
+    description: Unique name per workspace (e.g. dp-${USER}-myrepo)
+    required: true
+  RUN_ARGS:
+    description: Extra args for `container run` (e.g. "--publish 127.0.0.1:8080:8080/tcp")
+    default: ""
+    required: false
+exec:
+  init: |
+    if ! command -v container >/dev/null 2>&1; then
+      echo "Apple 'container' CLI not found" >&2
+      exit 1
+    fi
+    container system start >/dev/null 2>&1 || true
+  create: |
+    # idempotent create
+    if container ls | grep -q " ${CONTAINER_NAME}\$"; then
+      exit 0
+    fi
+    container run --detach --name "${CONTAINER_NAME}" ${RUN_ARGS} "${IMAGE}" sh -lc "sleep infinity"
+  command: |
+    # DevPod injects ${COMMAND}; run it inside the VM-backed container
+    container exec -i "${CONTAINER_NAME}" sh -lc "${COMMAND}"
+  delete: |
+    container stop "${CONTAINER_NAME}" >/dev/null 2>&1 || true
+    container delete "${CONTAINER_NAME}" >/dev/null 2>&1 || true
