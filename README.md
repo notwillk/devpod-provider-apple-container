@@ -9,13 +9,13 @@
 
 ## Getting started
 
-### One-click install
-
-[![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/notwillk/devpod-provider-apple-container)
-
-### Install via CLI
+## Install via CLI
 
 ```sh
 devpod provider add notwillk/devpod-provider-apple-container
 devpod provider use notwillk/devpod-provider-apple-container
 ```
+
+## Install via GUI
+
+![Configure Provider Screenshot](assets/configure-provider-screenshot.png)
